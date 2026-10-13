@@ -1,0 +1,32 @@
+services:
+# Base de données
+db:
+image: mariadb: 10.11
+container_name: glpi-db
+restart: always
+environment:
+- MARIADB_ROOT_PASSWORD=root_pass
+- MARIADB_DATABASE=glpi
+- MARIADB_USER=glpi
+- MARIADB_PASSWORD=glpi_pass
+volumes:
+- ./mysql:/var/lib/mysql
+
+# Serveur GLPI
+glpi:
+image: glpi/glpi:latest
+container_name: glpi-app
+restart: always
+ports:
+- "8080:80"
+environment:
+- GLPI_DB_HOST=db
+- GLPI_DB_NAME=glpi
+- GLPI_DB_USER=glpi
+- GLPI_DB_PASSWORD=glpi_pass
+volumes:
+- ./config:/var/www/html/config
+- ./files: /var/www/html/files
+- ./marketplace:/var/www/html/marketplace
+depends_on:
+- db
